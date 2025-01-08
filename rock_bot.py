@@ -740,7 +740,6 @@ rock_genres = {
 
 CHANNEL_USERNAME = "@RockReplay"
 
-
 async def check_subscription(user_id, context):
     try:
         chat_member = await context.bot.get_chat_member(CHANNEL_USERNAME, user_id)
@@ -756,7 +755,6 @@ async def send_main_menu(update: Update, image_url: str = None):
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-
     if image_url:
         await update.message.reply_photo(photo=image_url, caption='🎶 Привет, рок-энтузиаст! Готов отправиться в увлекательное музыкальное '
             'путешествие? Выбери способ поиска любимых клипов: По алфавиту – если ты знаешь, '
@@ -770,13 +768,9 @@ async def send_main_menu(update: Update, image_url: str = None):
             'кто хочет исследовать разнообразие рок-музыки! Выбери вариант ниже:',
             reply_markup=reply_markup)
 
-# Обновляем функцию start, чтобы передать URL изображения
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    image_url = 'https://logodix.com/logo/580915.png'  # Замените на ваш URL изображения
+    image_url = 'https://logodix.com/logo/580915.png' 
     await send_main_menu(update, image_url=image_url)
-
-
-
 
 async def send_search_options(update: Update):
     keyboard = [
@@ -814,13 +808,10 @@ async def check_subscription_handler(update: Update, context: ContextTypes.DEFAU
             reply_markup=reply_markup
         )
 
-
 async def go_to_search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
-
     await send_search_options(update)
-
 async def alphabet_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await verify_subscription_and_proceed(update, context, "alphabet")
 
@@ -831,14 +822,13 @@ async def back_to_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     query = update.callback_query
     await query.answer()
 
-    image_url = 'https://logodix.com/logo/580915.png'  # Убедитесь, что это ваш URL изображения
+    image_url = 'https://logodix.com/logo/580915.png' 
     keyboard = [
         [InlineKeyboardButton("Алфавит", callback_data="alphabet")],
         [InlineKeyboardButton("Поджанры", callback_data="genres")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    # Изменяем логику: отправляем изображение с текстом
     await query.message.reply_photo(
         photo=image_url,
         caption='🎶 Привет, рок-энтузиаст! Готов отправиться в увлекательное музыкальное '
@@ -848,7 +838,6 @@ async def back_to_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         reply_markup=reply_markup
     )
 
-    # Удаляем предыдущее сообщение
     await query.message.delete()
 
 async def send_alphabet_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -873,13 +862,10 @@ async def send_alphabet_selection(update: Update, context: ContextTypes.DEFAULT_
             reply_markup=reply_markup
         )
 
-
 async def verify_subscription_and_proceed(update: Update, context: ContextTypes.DEFAULT_TYPE, callback_data: str):
     user_id = update.effective_user.id
     is_subscribed = await check_subscription(user_id, context)
-
     query = update.callback_query
-
     try:
         # Попытка ответить на callback_query
         await query.answer()
@@ -913,12 +899,10 @@ async def verify_subscription_and_proceed(update: Update, context: ContextTypes.
         # В случае ошибки можно отправить сообщение обратно, например:
         await query.message.reply_text('Произошла ошибка при обработке запроса. Попробуйте снова.')
 
-
 async def send_genre_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     genres = list(rock_genres.keys())
     keyboard = []
-
-    buttons_per_row = 3  # Количество кнопок в строке
+    buttons_per_row = 3 
     for i in range(0, len(genres), buttons_per_row):
         row = [InlineKeyboardButton(genre, callback_data=f"genre_{genre}") for genre in genres[i:i + buttons_per_row]]
         keyboard.append(row)
@@ -965,7 +949,6 @@ async def english_alphabet(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     for i in range(0, len(letters), 4):
         keyboard.append([InlineKeyboardButton(letter, callback_data=f"en_{letter}") for letter in letters[i:i + 4]])
     keyboard.append([InlineKeyboardButton("Назад", callback_data="back")])
-
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text(text='Выбирай букву, на которую начинается твой любимый коллектив:', reply_markup=reply_markup)
 async def handle_alphabet_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -973,7 +956,7 @@ async def handle_alphabet_choice(update: Update, context: ContextTypes.DEFAULT_T
     await query.answer()
 
     if query.data == "ru_alphabet":
-        await russian_alphabet(update, context)  # Показать русский алфавит
+        await russian_alphabet(update, context) 
     elif query.data == "en_alphabet":
         await english_alphabet(update, context)
 
@@ -988,14 +971,11 @@ async def handle_letter_selection(update: Update, context: ContextTypes.DEFAULT_
     if bands:
         keyboard = []
         buttons_per_row = 2
-
         for i in range(0, len(bands), buttons_per_row):
             row = [InlineKeyboardButton(band, callback_data=band) for band in bands[i:i + buttons_per_row]]
             keyboard.append(row)
-
         keyboard.append([InlineKeyboardButton("Назад", callback_data="back")])
         reply_markup = InlineKeyboardMarkup(keyboard)
-
         await query.edit_message_text(text=f'В этом списке – группы, начинающиеся на букву {letter}:\nВыбери свою '
                                            f'любимую команду и давай продолжим наше путешествие!',
                                        reply_markup=reply_markup)
@@ -1014,9 +994,7 @@ async def band_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     genre = next(gen for gen in rock_genres if band in rock_genres[gen])
     tracks = rock_genres[genre][band]
     keyboard = []
-    buttons_per_row = 3  # Количество кнопок в строке
-
-    # Преобразуем словарь треков в список и группируем по три трека в ряд
+    buttons_per_row = 3 
     track_items = list(tracks.items())
     for i in range(0, len(track_items), buttons_per_row):
         row = [InlineKeyboardButton(track, url=url) for track, url in track_items[i:i + buttons_per_row]]
@@ -1028,8 +1006,6 @@ async def band_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     new_text = (f'🎵 Встречай творения группы {band}\nВот список их хитовых видеоклипов, которые '
                  f'точно заставят твое сердце биться в ритме рока. Выбирай трек и погружайся в '
                  f'мир невероятной музыки!')
-
-    # Проверяем, изменился ли текст или разметка
     if query.message.text != new_text or query.message.reply_markup != reply_markup:
         try:
             await query.edit_message_text(text=new_text, reply_markup=reply_markup)
@@ -1037,12 +1013,9 @@ async def band_selection(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             logging.error(f"Ошибка при редактировании сообщения: {e}")
             await query.message.reply_text(new_text, reply_markup=reply_markup)
 
-
 async def handle_back(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
     await query.answer()
-
-    # Здесь просто возвращаемся к предыдущему меню
     await back_to_menu(update, context)
 
 async def select_genre(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1067,7 +1040,7 @@ async def select_genre(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
                                   reply_markup=reply_markup)
 
 def main() -> None:
-    app = ApplicationBuilder().token("7084031631:AAENQ4PYJORjKAD-CY_vwWziglAEmCZ7DqI").build()
+    app = ApplicationBuilder().token().build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(handle_back, pattern='^back$'))
